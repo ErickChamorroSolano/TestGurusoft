@@ -1,0 +1,180 @@
+USE [master]
+GO
+/****** Object:  Database [GuruTest]    Script Date: 1/07/2024 11:31:16 p. m. ******/
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'GuruTest')
+BEGIN
+CREATE DATABASE [GuruTest]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'GuruTest', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\GuruTest.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'GuruTest_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\GuruTest_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+END
+GO
+ALTER DATABASE [GuruTest] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [GuruTest].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [GuruTest] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [GuruTest] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [GuruTest] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [GuruTest] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [GuruTest] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [GuruTest] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [GuruTest] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [GuruTest] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [GuruTest] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [GuruTest] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [GuruTest] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [GuruTest] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [GuruTest] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [GuruTest] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [GuruTest] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [GuruTest] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [GuruTest] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [GuruTest] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [GuruTest] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [GuruTest] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [GuruTest] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [GuruTest] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [GuruTest] SET RECOVERY FULL 
+GO
+ALTER DATABASE [GuruTest] SET  MULTI_USER 
+GO
+ALTER DATABASE [GuruTest] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [GuruTest] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [GuruTest] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [GuruTest] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [GuruTest] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [GuruTest] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'GuruTest', N'ON'
+GO
+ALTER DATABASE [GuruTest] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [GuruTest] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [GuruTest]
+GO
+/****** Object:  Table [dbo].[Requests]    Script Date: 1/07/2024 11:31:17 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Requests]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[Requests](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Request] [varchar](50) NOT NULL,
+	[FechaRequest] [datetime] NOT NULL,
+	[Response] [varchar](500) NULL,
+	[FechaResponse] [datetime] NOT NULL,
+	[Usuario] [varchar](50) NULL,
+ CONSTRAINT [PK_Requests] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_Requests_FechaRequest]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[Requests] ADD  CONSTRAINT [DF_Requests_FechaRequest]  DEFAULT (getdate()) FOR [FechaRequest]
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertarRequest]    Script Date: 1/07/2024 11:31:17 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertarRequest]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE [dbo].[InsertarRequest] AS' 
+END
+GO
+ALTER PROCEDURE [dbo].[InsertarRequest] -- [InsertarRequest] 'ObtenerPrimos(5,10)', '5 10 15 20 25', '192.168.100.1'
+(
+	@request as varchar(50),
+	@response as varchar(500),
+	@usuario as varchar(50)
+)
+AS
+BEGIN
+	DECLARE @id as int
+
+	INSERT INTO Requests (Request, FechaRequest, Response, FechaResponse, Usuario) VALUES (@request, GETDATE(), @response, GETDATE(), @usuario)
+
+	SELECT @id = SCOPE_IDENTITY();
+	SELECT @id;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[RecuperarRequestPorID]    Script Date: 1/07/2024 11:31:17 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecuperarRequestPorID]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE [dbo].[RecuperarRequestPorID] AS' 
+END
+GO
+ALTER PROCEDURE [dbo].[RecuperarRequestPorID]
+(
+	@Id as int
+)
+AS
+BEGIN
+	SELECT * from Requests where Id = @Id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[RecuperarRequests]    Script Date: 1/07/2024 11:31:17 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecuperarRequests]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE [dbo].[RecuperarRequests] AS' 
+END
+GO
+ALTER PROCEDURE [dbo].[RecuperarRequests]
+AS
+BEGIN
+	SELECT * from Requests
+END
+GO
+USE [master]
+GO
+ALTER DATABASE [GuruTest] SET  READ_WRITE 
+GO
