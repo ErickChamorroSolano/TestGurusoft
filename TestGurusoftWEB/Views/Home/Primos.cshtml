@@ -1,0 +1,32 @@
+﻿@model FormPrimo
+
+@{
+    ViewData["Title"] = "Primos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<partial name="_NotificationPartial" />
+
+<div class="card">
+    <div class="card-header">
+        Obtener numeros primos
+    </div>
+    <div class="card-body">
+        <form asp-action="Primos" asp-controller="Home" method="post">
+            <div class="mb-2">
+                <label class="form-label">numero</label>
+                <input type="text" class="form-control" asp-for="numero" required/>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">cantidad</label>
+                <input type="text" class="form-control" asp-for="cantidad" required/>
+            </div>
+
+            <button type="submit" class="btn btn-success">Enviar</button>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-warning">Volver</a>
+        </form>
+
+        <hr />
+    </div>
+</div>
